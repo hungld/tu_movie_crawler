@@ -15,8 +15,15 @@ SPIDER_MODULES = ['tu_movie_crawler.spiders']
 NEWSPIDER_MODULE = 'tu_movie_crawler.spiders'
 
 
+# SPLASH configs
+SPLASH_URL = 'http://192.168.59.103:8050'
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
+
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'tu_movie_crawler (+http://www.yourdomain.com)'
+# USER_AGENT = 'tu_movie_crawler (+http://www.yourdomain.com)'
+USER_AGENT = "Googlebot"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -46,15 +53,19 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'tu_movie_crawler.middlewares.MyCustomSpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+    # 'tu_movie_crawler.middlewares.MyCustomSpiderMiddleware': 543,
+    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'tu_movie_crawler.middlewares.MyCustomDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    # 'tu_movie_crawler.middlewares.MyCustomDownloaderMiddleware': 543,
+    'scrapy_splash.SplashCookiesMiddleware': 723,
+    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
