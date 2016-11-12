@@ -9,6 +9,7 @@ from scrapy.item import Item, Field
 
 
 class MovieItem(Item):
+    movie_id = Field()
     name = Field()
     namevi = Field()
     rating = Field()
@@ -16,6 +17,7 @@ class MovieItem(Item):
     premiereDate = Field()
     duration = Field()
     actors = Field()
+    movie_times = Field()
 
     # Reviews
     user = Field()
@@ -27,10 +29,3 @@ class MovieItem(Item):
     spider = Field()
     server = Field()
     date = Field()
-
-
-class SessionTimesItem(Item):
-    group_cinema = Field()
-    cinema_name = Field()
-    session_times_2d = Field()
-    session_times_3d = Field()

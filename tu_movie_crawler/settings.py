@@ -78,6 +78,10 @@ DOWNLOADER_MIDDLEWARES = {
 #ITEM_PIPELINES = {
 #    'tu_movie_crawler.pipelines.SomePipeline': 300,
 #}
+ITEM_PIPELINES = {'tu_movie_crawler.pipelines.MongoPipeline': 900, }
+
+MONGODB_URI = 'mongodb://localhost:27017'
+MONGODB_DB = "movie"
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

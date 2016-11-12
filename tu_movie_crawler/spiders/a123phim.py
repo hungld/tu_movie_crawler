@@ -4,9 +4,11 @@ from scrapy.loader.processors import TakeFirst, MapCompose
 from scrapy.loader import ItemLoader
 # from scrapy.linkextractors import LinkExtractor
 # from scrapy.spiders import CrawlSpider, Rule
-from tu_movie_crawler.items import MovieItem, SessionTimesItem
+from tu_movie_crawler.items import MovieItem
 
 import datetime
+import json
+import requests
 import scrapy
 import socket
 import urlparse
@@ -39,6 +41,7 @@ class A123phimSpider(scrapy.Spider):
         """
         l = ItemLoader(item=MovieItem(), response=response)
 
+        l.add_xpath('movie_id', '//*[@name="film_id"]', TakeFirst(), re='\d+')
         l.add_xpath('name', '//*[@class="filmDescription"]/h3/text()')
         l.add_xpath('namevi', '//*[@class="filmDescription"]/h2/text()')
         l.add_xpath('rating',
@@ -59,13 +62,22 @@ class A123phimSpider(scrapy.Spider):
         l.add_value('server', socket.gethostname())
         l.add_value('date', datetime.datetime.now())
 
+        # Get all movie times
+        movie_id = int(l.get_xpath('//*[@name="film_id"]', TakeFirst(), re='\d+'))
+        l.add_value('movie_times', self.parse_movie_times(movie_id))
+
         return l.load_item()
 
-    # def parse_session_times(self, response):
-    #     item = SessionTimesItem()
-    #     item['group_cinema'] = response.xpath(
-    #             '//*[@class="titgroupCinema"]/div/text()').extract()
-    #     item['cinema_name'] = response.xpath(
-    #             '//*[@class="titItemCinema"]/div/text()').extract()
-    #     # item['session_times_2d'] = response.xpath('')
-    #     return item
+    def parse_movie_times(self, movie_id):
+        date_time = datetime.datetime.now().strftime('%Y-%m-%d')
+
+        # There is 21 cities to crawl
+        cities = list(range(1, 22))
+
+        ajax_url = ['http://www.123phim.vn/default/ajax/?method=Session.getListGroupByCinemaNew&'
+                    'locationId={0}&filmId={1}&date={2}&pcinemaId=0'.format(
+                        city, movie_id, date_time) for city in cities]
+
+        movie_times = [json.loads(requests.get(url).text) for url in ajax_url]
+
+        return movie_times
